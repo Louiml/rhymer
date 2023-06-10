@@ -37,7 +37,7 @@ def get_rhyme(model, word, n_suggestions=5):
             rhyme_word = word_list[index.item()]
             rhyme_list.append(rhyme_word)
         rhyme_suggestions = ", ".join(rhyme_list)
-        return f"Your rhyme suggestions are: {rhyme_suggestions}."
+        return f"Here are some rhymes for the word {word}: {rhyme_suggestions}."
     
 def save_model(model, filepath):
     torch.save(model.state_dict(), filepath)
@@ -47,7 +47,9 @@ def get_rhyme_api():
     data = request.get_json()
     user_message = data.get('message', '').strip().lower()
 
-    if user_message == '1234':
+    if " " in user_message:
+        response = {'response': "ERROR: You can only write one word not several words."}
+    elif user_message == '1234':
         response = {'response': "5678"}
     else:
         rhyme_suggestions = get_rhyme(model, user_message, n_suggestions=5)
