@@ -38,6 +38,9 @@ def get_rhyme(model, word, n_suggestions=5):
             rhyme_list.append(rhyme_word)
         rhyme_suggestions = ", ".join(rhyme_list)
         return f"Your rhyme suggestions are: {rhyme_suggestions}."
+    
+def save_model(model, filepath):
+    torch.save(model.state_dict(), filepath)
 
 @app.route('/get_rhyme', methods=['POST'])
 def get_rhyme_api():
@@ -47,7 +50,7 @@ def get_rhyme_api():
     if user_message == '1234':
         response = {'response': "5678"}
     else:
-        rhyme_suggestions = get_rhyme(model, user_message, n_suggestions=3)
+        rhyme_suggestions = get_rhyme(model, user_message, n_suggestions=5)
         response = {'response': rhyme_suggestions}
 
     return jsonify(response)
@@ -65,6 +68,8 @@ if __name__ == '__main__':
     output_size = len(word_list)
 
     model = RhymingModel(input_size, hidden_size, output_size)
+    
+    save_model(model, "rhymer.pth")
 
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
